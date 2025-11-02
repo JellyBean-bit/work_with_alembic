@@ -1,6 +1,17 @@
-from sqlalchemy import create_engine
+import os
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
-engine = create_engine(
-    "postgresql://postgres:admin@localhost/lr2",
-    echo=True
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+async_session_factory = sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False
 )
