@@ -7,6 +7,6 @@
     DATABASE_URL="postgresql+asyncpg://${DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
    ``` 
 3. В терминале находясь в корне проекта прописать:
-`python main.py`
+`uv run python main.py`
 
 **Проект запущен!**
