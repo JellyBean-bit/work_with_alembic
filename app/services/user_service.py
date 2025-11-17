@@ -1,8 +1,9 @@
-from repositories.user_repository import UserRepository
-from schemas.user_schemas import UserCreate, UserUpdate
-from models.user import User
 from typing import List
 from uuid import UUID
+
+from app.repositories.user_repository import UserRepository
+from app.schemas.user_schemas import UserCreate, UserUpdate
+from app.models.user import User
 
 
 class UserService:
@@ -12,7 +13,15 @@ class UserService:
     async def get_by_id(self, user_id: UUID) -> User | None:
         return await self.user_repository.get_by_id(user_id)
 
-    async def get_by_filter(self, count: int, page: int, **kwargs) -> List[User]:
+    async def get_by_email(self, email: str) -> User | None:
+        return await self.user_repository.get_by_email(email)
+
+    async def get_by_filter(
+        self,
+        count: int,
+        page: int,
+        **kwargs
+    ) -> List[User]:
         return await self.user_repository.get_by_filter(count, page, **kwargs)
 
     async def create(self, data: UserCreate) -> User:

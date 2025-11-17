@@ -16,3 +16,19 @@
 `uv run python main.py`
 
 **Проект запущен!**
+
+
+# Тесты
+
+1. Запуск тестов слоя репозиториев.
+
+   В корне проекта прописать: 
+   ```
+   uv run python -m pytest tests/test_repositories/ -v
+   ```
+2. Запуск тестов слоя сервисов.
+
+   В корне проекта прописать:
+   ```
+   uv run python -m pytest tests/test_services/ -v
+   ```

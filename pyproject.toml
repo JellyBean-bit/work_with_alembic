@@ -14,4 +14,13 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.43",
     "uvicorn>=0.38.0",
+    "pytest",
+    "pytest-asyncio",
+    "polyfactory",
+    "aiosqlite>=0.21.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "--verbose --color=yes"

@@ -16,7 +16,7 @@ class Product(Base):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     price: Mapped[float] = mapped_column(nullable=False)
     description: Mapped[str | None] = mapped_column()
-
+    stock: Mapped[int] = mapped_column(nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
         default=datetime.now,
