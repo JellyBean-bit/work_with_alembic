@@ -1,10 +1,10 @@
 from uuid import UUID
 
+from app.models.order import Order
 from app.repositories.order_repository import OrderRepository
 from app.repositories.product_repository import ProductRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.order_schemas import OrderCreate
-from app.models.order import Order
 
 
 class OrderService:
@@ -12,7 +12,7 @@ class OrderService:
         self,
         order_repo: OrderRepository,
         product_repo: ProductRepository,
-        user_repo: UserRepository
+        user_repo: UserRepository,
     ):
         self.orders = order_repo
         self.products = product_repo

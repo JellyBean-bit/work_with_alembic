@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -17,6 +15,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build: .
+    container_name: lr2_app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:admin@db:5432/lr2
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: ["./entrypoint.sh"]
 
 volumes:
   postgres_data:

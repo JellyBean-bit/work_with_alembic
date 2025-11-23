@@ -1,6 +1,7 @@
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from uuid import UUID
 
 from app.models.product import Product
 from app.schemas.product_schemas import ProductCreate, ProductUpdate
@@ -11,14 +12,12 @@ class ProductRepository:
         self.session = session
 
     async def get_by_id(self, product_id: UUID) -> Product | None:
-        result = await self.session.execute(
-            select(Product).filter_by(id=product_id)
-        )
+        result = await self.session.execute(select(Product).filter_by(id=product_id))
         return result.scalar_one_or_none()
 
     async def get_by_filter(self, count: int, page: int, **kwargs):
-        stmt = select(Product).filter_by(**kwargs).limit(count).offset(
-            (page - 1) * count
+        stmt = (
+            select(Product).filter_by(**kwargs).limit(count).offset((page - 1) * count)
         )
         result = await self.session.execute(stmt)
         return result.scalars().all()

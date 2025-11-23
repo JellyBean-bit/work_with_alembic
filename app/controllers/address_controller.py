@@ -1,14 +1,11 @@
-from litestar import Controller, get, post, delete, put
-from litestar.exceptions import NotFoundException, ValidationException
 from typing import List
 from uuid import UUID
 
+from litestar import Controller, delete, get, post, put
+from litestar.exceptions import NotFoundException, ValidationException
+
+from app.schemas.address_schemas import AddressCreate, AddressResponse, AddressUpdate
 from app.services.address_service import AddressService
-from app.schemas.address_schemas import (
-    AddressCreate,
-    AddressResponse,
-    AddressUpdate
-)
 
 
 class AddressController(Controller):
@@ -25,9 +22,7 @@ class AddressController(Controller):
 
         address = await address_service.get_by_id(address_uuid)
         if not address:
-            raise NotFoundException(
-                detail=f"Address with ID {address_id} not found"
-            )
+            raise NotFoundException(detail=f"Address with ID {address_id} not found")
         return AddressResponse.model_validate(address)
 
     @get("/user/{user_id:str}")
@@ -51,9 +46,7 @@ class AddressController(Controller):
 
     @delete("/{address_id:str}")
     async def delete_address(
-        self,
-        address_service: AddressService,
-        address_id: str
+        self, address_service: AddressService, address_id: str
     ) -> None:
         try:
             address_uuid = UUID(address_id)
@@ -62,18 +55,13 @@ class AddressController(Controller):
 
         address = await address_service.get_by_id(address_uuid)
         if not address:
-            raise NotFoundException(
-                detail=f"Address with ID {address_id} not found"
-            )
+            raise NotFoundException(detail=f"Address with ID {address_id} not found")
 
         await address_service.delete(address_uuid)
 
     @put("/{address_id:str}")
     async def update_address(
-        self,
-        address_service: AddressService,
-        address_id: str,
-        data: AddressUpdate
+        self, address_service: AddressService, address_id: str, data: AddressUpdate
     ) -> AddressResponse:
         try:
             address_uuid = UUID(address_id)
@@ -82,8 +70,6 @@ class AddressController(Controller):
 
         address = await address_service.update(address_uuid, data)
         if not address:
-            raise NotFoundException(
-                detail=f"Address with ID {address_id} not found"
-            )
+            raise NotFoundException(detail=f"Address with ID {address_id} not found")
 
         return AddressResponse.model_validate(address)

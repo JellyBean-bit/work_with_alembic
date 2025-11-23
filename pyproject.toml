@@ -24,3 +24,28 @@ dependencies = [
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "--verbose --color=yes"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.0",
+    "pylint>=4.0.3",
+]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "invalid-name",
+    "raise-missing-from",
+    "import-error",
+    "no-member",
+]

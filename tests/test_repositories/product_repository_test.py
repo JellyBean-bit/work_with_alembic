@@ -1,4 +1,5 @@
 import pytest
+
 from app.repositories.product_repository import ProductRepository
 from app.schemas.product_schemas import ProductCreate, ProductUpdate
 
@@ -8,10 +9,7 @@ class TestProductRepository:
     async def test_create_product(self, product_repo: ProductRepository):
         """Тест создания продукта"""
         data = ProductCreate(
-            name="Test Product",
-            price=99.99,
-            description="Test description",
-            stock=10
+            name="Test Product", price=99.99, description="Test description", stock=10
         )
 
         product = await product_repo.create(data)
@@ -30,7 +28,7 @@ class TestProductRepository:
                 name="Test Product",
                 price=99.99,
                 description="Test description",
-                stock=10
+                stock=10,
             )
         )
 
@@ -46,10 +44,7 @@ class TestProductRepository:
         """Тест получения продукта по названию"""
         await product_repo.create(
             ProductCreate(
-                name="Unique Product",
-                price=50.0,
-                description="Unique product",
-                stock=5
+                name="Unique Product", price=50.0, description="Unique product", stock=5
             )
         )
 
@@ -60,17 +55,11 @@ class TestProductRepository:
         assert found_product.price == 50.0
 
     @pytest.mark.asyncio
-    async def test_update_product_partial(
-        self,
-        product_repo: ProductRepository
-    ):
+    async def test_update_product_partial(self, product_repo: ProductRepository):
         """Тест обновления продукта"""
         product = await product_repo.create(
             ProductCreate(
-                name="Product",
-                price=100.0,
-                description="Description",
-                stock=20
+                name="Product", price=100.0, description="Description", stock=20
             )
         )
 
@@ -89,10 +78,7 @@ class TestProductRepository:
         """Тест удаления продукта"""
         product = await product_repo.create(
             ProductCreate(
-                name="To Delete",
-                price=10.0,
-                description="To be deleted",
-                stock=1
+                name="To Delete", price=10.0, description="To be deleted", stock=1
             )
         )
 
@@ -105,10 +91,7 @@ class TestProductRepository:
         assert deleted_product is None
 
     @pytest.mark.asyncio
-    async def test_get_by_filter_all_products(
-        self,
-        product_repo: ProductRepository
-    ):
+    async def test_get_by_filter_all_products(self, product_repo: ProductRepository):
         """Тест получения всех продуктов"""
         products_data = [
             ProductCreate(name="Product 1", price=10.0, stock=5),

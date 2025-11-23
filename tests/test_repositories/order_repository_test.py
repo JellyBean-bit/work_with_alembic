@@ -1,5 +1,7 @@
-import pytest
 from uuid import UUID
+
+import pytest
+
 from app.repositories.order_repository import OrderRepository
 from app.schemas.order_schemas import OrderCreate
 
@@ -13,10 +15,7 @@ class TestOrderRepository:
         address_id = UUID("33345678-1234-1234-1234-123456789abc")
 
         data = OrderCreate(
-            user_id=user_id,
-            product_id=product_id,
-            address_id=address_id,
-            quantity=2
+            user_id=user_id, product_id=product_id, address_id=address_id, quantity=2
         )
 
         order = await order_repo.create(data, total_price=199.98)
@@ -40,9 +39,9 @@ class TestOrderRepository:
                 user_id=user_id,
                 product_id=product_id,
                 address_id=address_id,
-                quantity=1
+                quantity=1,
             ),
-            total_price=99.99
+            total_price=99.99,
         )
 
         found_order = await order_repo.get_by_id(order.id)
@@ -60,7 +59,7 @@ class TestOrderRepository:
         """Тест получения заказов пользователя"""
         user_id = UUID("12345678-1234-1234-1234-123456789abc")
         other_user_id = UUID("32345678-1234-1234-1234-123456789abc")
-        address_id = UUID("33345678-1234-1234-1234-123456789abc")  
+        address_id = UUID("33345678-1234-1234-1234-123456789abc")
         other_address_id = UUID("44445678-1234-1234-1234-123456789abc")
 
         await order_repo.create(
@@ -68,18 +67,18 @@ class TestOrderRepository:
                 user_id=user_id,
                 product_id=UUID("11111111-1111-1111-1111-111111111111"),
                 address_id=address_id,
-                quantity=1
+                quantity=1,
             ),
-            total_price=100.0
+            total_price=100.0,
         )
         await order_repo.create(
             OrderCreate(
                 user_id=user_id,
                 product_id=UUID("22222222-2222-2222-2222-222222222222"),
                 address_id=address_id,
-                quantity=2
+                quantity=2,
             ),
-            total_price=200.0
+            total_price=200.0,
         )
 
         await order_repo.create(
@@ -87,9 +86,9 @@ class TestOrderRepository:
                 user_id=other_user_id,
                 product_id=UUID("33333333-3333-3333-3333-333333333333"),
                 address_id=other_address_id,
-                quantity=1
+                quantity=1,
             ),
-            total_price=50.0
+            total_price=50.0,
         )
 
         user_orders = await order_repo.get_by_user(user_id)
@@ -110,9 +109,9 @@ class TestOrderRepository:
                 user_id=user_id,
                 product_id=product_id,
                 address_id=address_id,
-                quantity=1
+                quantity=1,
             ),
-            total_price=99.99
+            total_price=99.99,
         )
 
         found_order = await order_repo.get_by_id(order.id)

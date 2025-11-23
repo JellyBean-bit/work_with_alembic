@@ -1,6 +1,7 @@
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from uuid import UUID
 
 from app.models.order import Order
 from app.schemas.order_schemas import OrderCreate
@@ -12,15 +13,11 @@ class OrderRepository:
         self.session = session
 
     async def get_by_id(self, order_id: UUID):
-        result = await self.session.execute(
-            select(Order).filter_by(id=order_id)
-        )
+        result = await self.session.execute(select(Order).filter_by(id=order_id))
         return result.scalar_one_or_none()
 
     async def get_by_user(self, user_id: UUID):
-        result = await self.session.execute(
-            select(Order).filter_by(user_id=user_id)
-        )
+        result = await self.session.execute(select(Order).filter_by(user_id=user_id))
         return result.scalars().all()
 
     async def create(self, data: OrderCreate, total_price: float):

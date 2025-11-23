@@ -1,4 +1,5 @@
 import pytest
+
 from app.repositories.user_repository import UserRepository
 from app.schemas.user_schemas import UserCreate, UserUpdate
 
@@ -12,7 +13,7 @@ class TestUserRepository:
             email="john@example.com",
             first_name="first name",
             last_name="last name",
-            description="test user"
+            description="test user",
         )
 
         user = await user_repo.create(data)
@@ -27,12 +28,12 @@ class TestUserRepository:
     @pytest.mark.asyncio
     async def test_get_user_by_email(self, user_repo: UserRepository):
         """Тест получения пользователя по email"""
-        user_data = UserCreate( 
+        user_data = UserCreate(
             username="test",
             email="test@example.com",
             first_name="first name",
             last_name="last name",
-            description="test user"
+            description="test user",
         )
         user = await user_repo.create(user_data)
 
@@ -53,17 +54,12 @@ class TestUserRepository:
             email="unique@example.com",
             first_name="first name",
             last_name="last name",
-            description="unique user"
+            description="unique user",
         )
         user = await user_repo.create(user_data)
 
-        update_data = UserUpdate(
-            description="new description"
-        )
-        updated_user = await user_repo.update(
-            user.id,
-            update_data
-        )
+        update_data = UserUpdate(description="new description")
+        updated_user = await user_repo.update(user.id, update_data)
 
         assert updated_user is not None
         assert updated_user.username == "unique"
@@ -71,7 +67,7 @@ class TestUserRepository:
         assert updated_user.first_name == "first name"
         assert updated_user.last_name == "last name"
         assert updated_user.description == "new description"
-      
+
     @pytest.mark.asyncio
     async def test_delete_user(self, user_repo: UserRepository):
         """Тест удаления пользователя"""
@@ -81,10 +77,10 @@ class TestUserRepository:
                 email="delete@example.com",
                 first_name="first name",
                 last_name="last name",
-                description="to be deleted"
+                description="to be deleted",
             )
         )
-       
+
         found_user = await user_repo.get_by_id(user.id)
         assert found_user is not None
 
@@ -102,22 +98,22 @@ class TestUserRepository:
                 email="user1@example.com",
                 first_name="First1",
                 last_name="Last1",
-                description="User 1"
+                description="User 1",
             ),
             UserCreate(
                 username="user2",
                 email="user2@example.com",
                 first_name="First2",
                 last_name="Last2",
-                description="User 2"
+                description="User 2",
             ),
             UserCreate(
                 username="user3",
                 email="user3@example.com",
                 first_name="First3",
                 last_name="Last3",
-                description="User 3"
-            )
+                description="User 3",
+            ),
         ]
 
         created_users = []

@@ -1,13 +1,13 @@
-import pytest
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import AsyncMock, Mock
 from uuid import uuid4
+
+import pytest
 
 from app.repositories.order_repository import OrderRepository
 from app.repositories.product_repository import ProductRepository
 from app.repositories.user_repository import UserRepository
-
-from app.services.order_service import OrderService
 from app.schemas.order_schemas import OrderCreate
+from app.services.order_service import OrderService
 
 
 class TestOrderService:
@@ -53,14 +53,11 @@ class TestOrderService:
         order_service = OrderService(
             order_repo=mock_order_repo,
             product_repo=mock_product_repo,
-            user_repo=mock_user_repo
+            user_repo=mock_user_repo,
         )
 
         order_data = OrderCreate(
-            user_id=user_id,
-            address_id=address_id,
-            product_id=product_id,
-            quantity=2
+            user_id=user_id, address_id=address_id, product_id=product_id, quantity=2
         )
 
         result = await order_service.create(order_data)
@@ -93,7 +90,7 @@ class TestOrderService:
         mock_product.id = product_id
         mock_product.name = "Test Product"
         mock_product.price = 100.0
-        mock_product.stock = 2 
+        mock_product.stock = 2
 
         mock_user_repo.get_by_id.return_value = mock_user
         mock_product_repo.get_by_id.return_value = mock_product
@@ -101,21 +98,18 @@ class TestOrderService:
         order_service = OrderService(
             order_repo=mock_order_repo,
             product_repo=mock_product_repo,
-            user_repo=mock_user_repo
+            user_repo=mock_user_repo,
         )
 
         order_data = OrderCreate(
-            user_id=user_id,
-            address_id=address_id,
-            product_id=product_id,
-            quantity=5  
+            user_id=user_id, address_id=address_id, product_id=product_id, quantity=5
         )
 
         with pytest.raises(ValueError, match="Not enough stock"):
             await order_service.create(order_data)
 
-        mock_product_repo.update.assert_not_called()  
-        mock_order_repo.create.assert_not_called()   
+        mock_product_repo.update.assert_not_called()
+        mock_order_repo.create.assert_not_called()
 
         mock_user_repo.get_by_id.assert_called_once_with(user_id)
         mock_product_repo.get_by_id.assert_called_once_with(product_id)
@@ -158,14 +152,11 @@ class TestOrderService:
         order_service = OrderService(
             order_repo=mock_order_repo,
             product_repo=mock_product_repo,
-            user_repo=mock_user_repo
+            user_repo=mock_user_repo,
         )
 
         order_data = OrderCreate(
-            user_id=user_id,
-            address_id=address_id,
-            product_id=product_id,
-            quantity=3
+            user_id=user_id, address_id=address_id, product_id=product_id, quantity=3
         )
 
         result = await order_service.create(order_data)
