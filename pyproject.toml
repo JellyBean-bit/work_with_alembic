@@ -18,6 +18,8 @@ dependencies = [
     "pytest-asyncio",
     "polyfactory",
     "aiosqlite>=0.21.0",
+    "faststream[rabbit]",
+    "pika",
 ]
 
 [tool.pytest.ini_options]

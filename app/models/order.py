@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from pydantic import BaseModel
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,3 +30,8 @@ class Order(Base):
     user = relationship("User", back_populates="orders")
     address = relationship("Address", back_populates="orders")
     product = relationship("Product", back_populates="orders")
+
+
+class OrderItem(BaseModel):
+    product_id: UUID
+    quantity: int

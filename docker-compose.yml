@@ -1,4 +1,19 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=local
+    volumes:
+      - rabbitmq_data:/data
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   db:
     image: postgres:15
     container_name: lr2_db
@@ -30,5 +45,30 @@ services:
       - .:/app
     command: ["./entrypoint.sh"]
 
+  consumer:
+    build: .
+
+    command: python -m app.messaging.rabbitmq_consumer
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  producer:
+    build: .
+ 
+    command: python -m app.messaging.rabbitmq_producer
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      consumer:
+        condition: service_started
+    volumes:
+      - .:/app
+
 volumes:
   postgres_data:
+  rabbitmq_data:
