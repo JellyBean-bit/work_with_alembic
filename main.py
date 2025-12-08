@@ -9,6 +9,7 @@ from app.controllers.order_controller import OrderController
 from app.controllers.product_controller import ProductController
 from app.controllers.user_controller import UserController
 from app.database import async_session_factory
+from app.redis_client import redis_client
 from app.repositories.address_repository import AddressRepository
 from app.repositories.order_repository import OrderRepository
 from app.repositories.product_repository import ProductRepository
@@ -25,6 +26,14 @@ async def provide_db_session() -> AsyncGenerator[AsyncSession, None]:
             yield session
         finally:
             await session.close()
+
+
+async def startup_redis():
+    await redis_client.connect()
+
+
+async def shutdown_redis():
+    await redis_client.close()
 
 
 async def provide_user_repository(db_session: AsyncSession) -> UserRepository:
@@ -85,6 +94,8 @@ app = Litestar(
         "order_service": Provide(provide_order_service),
         "address_service": Provide(provide_address_service),
     },
+    on_startup=[startup_redis],
+    on_shutdown=[shutdown_redis],
 )
 
 if __name__ == "__main__":

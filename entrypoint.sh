@@ -7,6 +7,12 @@ while ! nc -z db 5432; do
 done
 echo "Database is ready!"
 
+echo "Waiting for Redis to be ready..."
+while ! nc -z redis 6379; do
+  sleep 1
+done
+echo "Redis is ready!"
+
 # Запуск миграций Alembic 
 echo "Running database migrations..."
 uv run alembic upgrade head
