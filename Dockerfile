@@ -14,7 +14,7 @@ RUN pip install uv
 COPY pyproject.toml ./
 
 # Установка зависимостей через uv
-RUN uv pip install --system -r pyproject.toml
+RUN uv pip install --system -e .
 
 # Копирование исходного кода
 COPY . .

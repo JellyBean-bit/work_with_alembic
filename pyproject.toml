@@ -3,7 +3,7 @@ name = "lr-2"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "alembic>=1.16.5",
     "asyncpg>=0.30.0",
@@ -21,6 +21,9 @@ dependencies = [
     "faststream[rabbit]",
     "pika",
     "redis>=5.0.0",
+
+    "taskiq",
+    "taskiq-aio-pika>=0.3.0",
 ]
 
 [tool.pytest.ini_options]

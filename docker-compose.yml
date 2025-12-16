@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -7,12 +9,18 @@ services:
     environment:
       - RABBITMQ_DEFAULT_VHOST=local
     volumes:
-      - rabbitmq_data:/data
+      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: >
+        sh -c "
+          rabbitmq-diagnostics -q ping &&
+          rabbitmq-diagnostics -q check_port_connectivity &&
+          rabbitmqctl -q list_vhosts | grep -q '^local$$'
+        "
       interval: 5s
-      timeout: 5s
-      retries: 10
+      timeout: 10s
+      retries: 15
+      start_period: 20s
 
   db:
     image: postgres:15
@@ -26,52 +34,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lr2"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 6
 
-  app:
-    build: .
-    container_name: lr2_app
-    environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:admin@db:5432/lr2
-      REDIS_URL: redis://redis:6379/0
-    ports:
-      - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    command: ["./entrypoint.sh"]
-
-  consumer:
-    build: .
-
-    command: python -m app.messaging.rabbitmq_consumer
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    volumes:
-      - .:/app
-
-  producer:
-    build: .
- 
-    command: python -m app.messaging.rabbitmq_producer
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      consumer:
-        condition: service_started
-    volumes:
-      - .:/app
-  
   redis:
     image: redis:latest
     container_name: redis
@@ -84,6 +51,71 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  app:
+    build: .
+    container_name: lr2_app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:admin@db:5432/lr2
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/local
+    ports:
+      - "8000:8000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: ["./entrypoint.sh"]
+
+  consumer:
+    build: .
+    container_name: lr2_consumer
+    command: python -m app.messaging.rabbitmq_consumer
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/local
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  producer:
+    build: .
+    container_name: lr2_producer
+    command: python -m app.messaging.rabbitmq_producer
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/local
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      consumer:
+        condition: service_started
+    volumes:
+      - .:/app
+
+  scheduler:
+    build: .
+    container_name: lr2_scheduler
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:admin@db:5432/lr2
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/local
+    command: >
+      sh -c "
+        echo 'Waiting for RabbitMQ and DB...' &&
+        taskiq scheduler app.taskiq_background.scheduler:scheduler --skip-first-run
+      "
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:

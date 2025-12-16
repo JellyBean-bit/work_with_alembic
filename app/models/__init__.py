@@ -3,5 +3,6 @@ from .base import Base
 from .order import Order
 from .product import Product
 from .user import User
+from .order_report import OrderReport
 
-__all__ = ["Base", "User", "Address", "Product", "Order"]
+__all__ = ["Base", "User", "Address", "Product", "Order", "OrderReport"]
